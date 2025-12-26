@@ -6,6 +6,7 @@ import logging
 import numpy as np
 from config.settings import *
 from data.preprocessor import qubits,load_feature_scalers
+from data.preprocessor import compute_feature_scalers, preprocess_data
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,6 @@ def build_qnn_model():
 
 def train_qnn_model(df, weights_path):
     """Train QNN model on given data."""
-    from data.preprocessor import compute_feature_scalers, preprocess_data
 
     scalers = load_feature_scalers()
     x_train, _ = preprocess_data(df, scalers)
@@ -65,7 +65,11 @@ def train_qnn_model(df, weights_path):
         model.load_weights(weights_path)
     else:
         logger.info(f"Training new model and saving weights to {weights_path}")
-        history = model.fit(x_train, y_train, batch_size=128, epochs=50, verbose=2, callbacks=callbacks)
+        history = model.fit(x_train, y_train, batch_size=128, epochs=50, verbose=2, validation_split=0.2, callbacks=callbacks)
         model.save_weights(weights_path)
-        historynp.savez(weights_path.replace(".h5", ".npz"),     loss=np.array(history.history["loss"]),    accuracy=np.array(history.history["accuracy"]), val_loss=np.array(history.history["val_loss"]), val_accuracy=np.array(history.history["val_accuracy"]), )
+        np.savez(weights_path.replace(".h5", ".npz"),
+                 loss=np.array(history.history["loss"]),
+                 accuracy=np.array(history.history["accuracy"]),
+                 val_loss=np.array(history.history["val_loss"]),
+                 val_accuracy=np.array(history.history["val_accuracy"]), )
     return model

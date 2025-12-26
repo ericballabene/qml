@@ -20,6 +20,6 @@ python3 --version
 pip list
 
 cd /eos/user/e/eballabe/Quantum/qml
-python3 main.py
+python3 main_qnn.py
 
 echo "End time: $(date)"

@@ -63,3 +63,31 @@ def preprocess_data(df, scalers):
     circuits = [encode_features_as_circuit(vals) for vals in df[feature_cols].values]
     circuit_tensor = tfq.convert_to_tensor(circuits)
     return circuit_tensor, df
+    
+def preprocess_data_dnn(df, scalers):
+    """
+    Preprocess data for a DNN: scale features to [0, 1] range.
+    Returns:
+        X_scaled: np.ndarray of scaled features
+        df: original dataframe with optional scaled columns added
+    """
+    df = df.copy()
+    feature_cols = []
+    X_scaled = []
+
+    for f in features:
+        newcol = f + "_scaled"
+        fmin, fmax = scalers[f]["min"], scalers[f]["max"]
+        if fmax == fmin:
+            df[newcol] = 0.0
+        else:
+            # scale to [0, 1]
+            df[newcol] = (df[f] - fmin) / (fmax - fmin)
+            # clip just in case
+            df[newcol] = np.clip(df[newcol], 0.0, 1.0)
+        feature_cols.append(newcol)
+
+    # Create numpy array for model input
+    X_scaled = df[feature_cols].values.astype(np.float32)
+    return X_scaled, df
+

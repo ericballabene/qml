@@ -10,8 +10,8 @@ features = [
 NUM_QUBITS = len(features)
 
 class_names = [
-    "QNN_Background", # 0
-    "QNN_Signal",     # 1
+    "Background_Score", # 0
+    "Signal_Score",     # 1
 ]
 
 base_path = '/eos/user/e/eballabe/Quantum/hzzanalysis/output_trees'
@@ -44,5 +44,9 @@ variables_to_copy = features + ["eventNumber", "totalWeight"]
 variables_to_copy_data = features + ["eventNumber"]
 
 scaler_file = "feature_scalers.json"
+
 saved_model_A = 'QNN_A.h5'
 saved_model_B = 'QNN_B.h5'
+
+saved_model_A_DNN = 'DNN_A.h5'
+saved_model_B_DNN = 'DNN_B.h5'

@@ -1,15 +1,15 @@
 # submit_qnn.sub
 Universe   = vanilla
-Executable = run_qml.sh
+Executable = run_qml_dnn.sh
 Arguments  =
 
 # Use your current working directory
 Initialdir = /eos/user/e/eballabe/Quantum/qml
 
 # Output logs
-output     = logs/qnn.out
-error      = logs/qnn.err
-log        = logs/qnn.log
+output     = logs/dnn.out
+error      = logs/dnn.err
+log        = logs/dnn.log
 
 
 request_gpus = 1

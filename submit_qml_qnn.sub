@@ -1,0 +1,30 @@
+# submit_qnn.sub
+Universe   = vanilla
+Executable = run_qml_qnn.sh
+Arguments  =
+
+# Use your current working directory
+Initialdir = /eos/user/e/eballabe/Quantum/qml
+
+# Output logs
+output     = logs/qnn.out
+error      = logs/qnn.err
+log        = logs/qnn.log
+
+
+request_gpus = 1
+request_cpus            = 8
+request_memory          = 4 GB
+request_disk            = 4 GB
+
+requirements            = regexp("V100S|A100|H100[^L]", TARGET.GPUs_DeviceName)
+
++JobFlavour    = "testmatch"
+
+
+
+# File transfer
+ShouldTransferFiles = YES
+WhenToTransferOutput    = ON_EXIT
+
+Queue
