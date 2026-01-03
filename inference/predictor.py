@@ -16,7 +16,7 @@ def batched_predict(model, x_test, batch_size=512):
         batch = x_test[i:i + batch_size]
         preds.append(model.predict(batch, batch_size=len(batch), verbose=0))
     return np.vstack(preds)
-    
+
 def run_inference_on_sample(
     tree,
     model_A,
@@ -60,8 +60,12 @@ def run_inference_on_sample(
             preds = batched_predict(model, x_test, batch_size=batch_size)
 
             df_out = df_sub.copy()
-            for i, name in enumerate(class_names):
-                df_out[name] = preds[:, i].astype(np.float32)
+            # Multiclass
+            #for i, name in enumerate(class_names):
+            #    df_out[name] = preds[:, i].astype(np.float32)
+
+            # Binary
+            df_out["Score"] = preds[:, 0].astype(np.float32)
 
             df_processed_all.append(df_out)
 

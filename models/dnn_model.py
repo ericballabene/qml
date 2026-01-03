@@ -20,7 +20,10 @@ def build_dnn_model(input_shape):
         tf.keras.layers.Dense(100, activation='relu',
                               kernel_initializer=tf.keras.initializers.RandomNormal(stddev=0.1)),
         tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(len(class_names), activation='softmax')
+        # Binary
+        tf.keras.layers.Dense(1, activation='sigmoid')
+        # Multiclass
+        #tf.keras.layers.Dense(len(class_names), activation='softmax')
     ])
     return model
 
@@ -29,12 +32,14 @@ def train_dnn_model(df, weights_path):
 
     scalers = load_feature_scalers()
     x_train, _ = preprocess_data_dnn(df, scalers)
+    # int for binary
     y_train = df['Label'].values.astype(np.int32)
 
     model = build_dnn_model(x_train.shape[1])
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
-        loss='sparse_categorical_crossentropy',
+        loss=tf.keras.losses.BinaryCrossentropy(),
+        #loss='sparse_categorical_crossentropy',
         metrics=['accuracy']
     )
 

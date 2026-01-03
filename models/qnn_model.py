@@ -23,21 +23,16 @@ def create_pqc():
     return circuit, symbols, readout_operators
 
 def build_qnn_model():
-    """Build the Quantum Neural Network model."""
     pqc, symbols, ops = create_pqc()
+
     model = tf.keras.Sequential([
         tf.keras.layers.Input(shape=(), dtype=tf.string, name='quantum_input'),
+
+        # Quantum feature extractor
         tfq.layers.PQC(pqc, ops, differentiator=tfq.differentiators.Adjoint()),
-        tf.keras.layers.Dense(100, activation='relu',
-                              kernel_initializer=tf.keras.initializers.RandomNormal(stddev=0.1)),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(100, activation='relu',
-                              kernel_initializer=tf.keras.initializers.RandomNormal(stddev=0.1)),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(100, activation='relu',
-                              kernel_initializer=tf.keras.initializers.RandomNormal(stddev=0.1)),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(len(class_names), activation='softmax')
+
+        # Classical classifier head
+        tf.keras.layers.Dense(1, activation='sigmoid')
     ])
     return model
 
@@ -45,13 +40,14 @@ def train_qnn_model(df, weights_path):
     """Train QNN model on given data."""
 
     scalers = load_feature_scalers()
+
     x_train, _ = preprocess_data(df, scalers)
     y_train = df['Label'].values.astype(np.int32)
 
     model = build_qnn_model()
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
-        loss='sparse_categorical_crossentropy',
+        loss=tf.keras.losses.BinaryCrossentropy(),#'sparse_categorical_crossentropy',
         metrics=['accuracy']
     )
 

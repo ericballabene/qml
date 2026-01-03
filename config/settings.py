@@ -45,8 +45,14 @@ variables_to_copy_data = features + ["eventNumber"]
 
 scaler_file = "feature_scalers.json"
 
+# QNN
 saved_model_A = 'QNN_A.h5'
 saved_model_B = 'QNN_B.h5'
 
+# DNN
 saved_model_A_DNN = 'DNN_A.h5'
 saved_model_B_DNN = 'DNN_B.h5'
+
+# QNN + DNN
+saved_model_A_QNNDNN = 'QNNDNN_A.h5'
+saved_model_B_QNNDNN = 'QNNDNN_B.h5'
