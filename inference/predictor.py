@@ -84,8 +84,8 @@ def run_inference_on_sample(
 def test_and_save(
     model_A,
     model_B,
-    output_dir="output_qnn",
     preprocess_fn=preprocess_data,
+    output_dir="output_qnn",
 ):
     """Run inference on test data using both models and save results."""
     os.makedirs(output_dir, exist_ok=True)

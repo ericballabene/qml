@@ -91,3 +91,16 @@ def preprocess_data_dnn(df, scalers):
     X_scaled = df[feature_cols].values.astype(np.float32)
     return X_scaled, df
 
+def preprocess_data_reuploading(df, scalers):
+    """Preprocess data for re-uploading PQC by encoding features directly into RX gates."""
+    df, feature_cols = apply_scalers(df, scalers)
+
+    circuits = []
+    for vals in df[feature_cols].values:
+        circuit = cirq.Circuit()
+        for i, val in enumerate(vals):
+            circuit.append(cirq.rx(float(val))(qubits[i]))
+        circuits.append(circuit)
+
+    circuit_tensor = tfq.convert_to_tensor(circuits)
+    return circuit_tensor, df
