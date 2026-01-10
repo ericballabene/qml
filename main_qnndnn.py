@@ -2,7 +2,7 @@ import logging
 from utils.helpers import setup_logging, setup_reproducibility
 from data.loader import read_training_samples_limited, split_AB
 from data.preprocessor import compute_feature_scalers
-from models.qnndnn_model import train_qnn_model
+from models.qnndnn_model import train_qnndnn_model, train_qnndnn_model_reuploading
 from inference.predictor import test_and_save
 from config.settings import saved_model_A_QNNDNN, saved_model_B_QNNDNN
 
@@ -20,10 +20,12 @@ def main():
     A, B = split_AB(df)
 
     logger.info("Training QNN on subset A")
-    model_A = train_qnn_model(A, saved_model_A_QNNDNN)
+    #model_A = train_qnndnn_model(A, saved_model_A_QNNDNN)
+    model_A = train_qnndnn_model_reuploading(A, saved_model_A_QNNDNN)
 
     logger.info("Training QNN on subset B")
-    model_B = train_qnn_model(B, saved_model_B_QNNDNN)
+    #model_B = train_qnndnn_model(B, saved_model_B_QNNDNN)
+    model_B = train_qnndnn_model_reuploading(B, saved_model_B_QNNDNN)
 
     logger.info("Running inference with both models in one pass")
     test_and_save(model_A, model_B, output_dir='output_qnndnn')
