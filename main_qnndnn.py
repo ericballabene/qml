@@ -2,7 +2,7 @@ import logging
 from utils.helpers import setup_logging, setup_reproducibility
 from data.loader import read_training_samples_limited, split_AB
 from data.preprocessor import compute_feature_scalers
-from models.qnndnn_model import train_qnndnn_model, train_qnndnn_model_reuploading
+from models.qnndnn_model import train_qnndnn_model, train_qnndnn_model_reuploading, train_qnndnn_model_reuploading_with_multiqubit_correlators
 from inference.predictor import test_and_save
 from config.settings import saved_model_A_QNNDNN, saved_model_B_QNNDNN
 
@@ -21,14 +21,16 @@ def main():
 
     logger.info("Training QNN on subset A")
     #model_A = train_qnndnn_model(A, saved_model_A_QNNDNN)
-    model_A = train_qnndnn_model_reuploading(A, saved_model_A_QNNDNN)
+    #model_A = train_qnndnn_model_reuploading(A, saved_model_A_QNNDNN)
+    model_A = train_qnndnn_model_reuploading_with_multiqubit_correlators(A, saved_model_A_QNNDNN)
 
     logger.info("Training QNN on subset B")
     #model_B = train_qnndnn_model(B, saved_model_B_QNNDNN)
-    model_B = train_qnndnn_model_reuploading(B, saved_model_B_QNNDNN)
+    #model_B = train_qnndnn_model_reuploading(B, saved_model_B_QNNDNN)
+    model_B = train_qnndnn_model_reuploading_with_multiqubit_correlators(B, saved_model_B_QNNDNN)
 
     logger.info("Running inference with both models in one pass")
-    test_and_save(model_A, model_B, output_dir='output_qnndnn')
+    test_and_save(model_A, model_B, output_dir='output_qnndnn_reuploading_with_multiqubit_correlators')
 
     logger.info("All done!")
 
