@@ -6,7 +6,7 @@ from config.settings import features
 from utils.helpers import setup_logging, setup_reproducibility
 from data.loader import read_training_samples_limited, split_AB
 from models.quantum_vae import train_on_subset
-from inference.vae_inference import test_and_save  # updated DNN-style VAE inference
+from inference.qvae_inference import test_and_save
 
 OUTPUT_DIR = "output_qvae"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -59,7 +59,7 @@ def main():
     test_and_save(
         vae_A,
         vae_B,
-        feature_names=features,  # already filtered numeric features
+        feature_names=features,
         scaler_A=scaler_A,
         scaler_B=scaler_B,
         output_dir=OUTPUT_DIR

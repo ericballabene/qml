@@ -35,7 +35,7 @@ def batched_predict(vae, X, batch_size=128):
 
 def run_vae_losses(X_scaled, vae):
     """Compute VAE losses for a scaled dataset."""
-    return batched_predict(vae, X_scaled)
+    return batched_predict(vae, X_scaled, batch_size=8)
 
 def test_and_save(vae_A, vae_B, feature_names, scaler_A, scaler_B, output_dir="output_vae"):
     """Run VAE inference per-year, per-sample, saving ROOT files with variables_to_copy + VAE losses."""

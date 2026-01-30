@@ -205,44 +205,60 @@ def train_QVAE(
     mse_loss_fn = tf.keras.losses.MeanSquaredError()
 
     history_loss = []
+    history_reco = []
+    history_qloss = []
 
     for epoch in range(epochs):
         epoch_loss = 0.0
+        epoch_reco = 0.0
+        epoch_qloss = 0.0
         num_batches = 0
 
         for batch in dataset:
             with tf.GradientTape() as tape:
                 x_hat, _, _ = model(batch)
 
+                # reconstruction loss
                 reco_loss = mse_loss_fn(batch, x_hat)
 
-                # Optional quantum regularization
-                q_reg = 1e-4 * tf.reduce_sum(
-                    tf.square(model.quantum_latent.theta)
-                )
+                # quantum regularization
+                q_reg = 1e-4 * tf.reduce_sum(tf.square(model.quantum_latent.theta))
 
+                # total loss
                 loss = reco_loss + q_reg
 
             grads = tape.gradient(loss, model.trainable_variables)
-            optimizer.apply_gradients(
-                zip(grads, model.trainable_variables)
-            )
+            optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
+            # accumulate per epoch
             epoch_loss += loss.numpy()
+            epoch_reco += reco_loss.numpy()
+            epoch_qloss += q_reg.numpy()
             num_batches += 1
 
+        # average over batches
         epoch_loss /= num_batches
+        epoch_reco /= num_batches
+        epoch_qloss /= num_batches
+
         history_loss.append(epoch_loss)
+        history_reco.append(epoch_reco)
+        history_qloss.append(epoch_qloss)
 
         print(
             f"[QVAE {model_name}] Epoch {epoch+1}/{epochs} | "
-            f"Loss: {epoch_loss:.6f}"
+            f"Reco: {epoch_reco:.6f}  | "
+            f"Quantum Loss: {epoch_qloss:.6f} | "
+            f"Total: {epoch_loss:.6f}"
         )
 
     os.makedirs(save_dir, exist_ok=True)
+
     np.savez(
         f"{save_dir}/QVAE_{model_name}.npz",
         loss=np.array(history_loss),
+        reco_loss=np.array(history_reco),
+        qloss=np.array(history_qloss),
     )
 
     print(f"[QVAE {model_name}] Saved training history")
@@ -279,7 +295,7 @@ def train_on_subset(
     )
     dataset = dataset.shuffle(
         buffer_size=len(X_subset), seed=47
-    ).batch(128)
+    ).batch(8)
 
     print(
         f"Training QVAE {model_name} on {len(X_subset)} samples "

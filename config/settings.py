@@ -5,6 +5,7 @@ import os
 # -------------------------
 features = [
     'mass', 'lep1_pt', 'lep2_pt', 'lep3_pt', 'lep4_pt'
+    #, 'theta_star', 'theta1', 'theta2', 'phi', 'phi1'
 ]
 
 NUM_QUBITS = len(features)

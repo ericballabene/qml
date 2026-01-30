@@ -119,7 +119,7 @@ def train_on_subset(X_subset, latent_dim=10, epochs=50, model_name="A", save_dir
 
     # TF dataset
     dataset = tf.data.Dataset.from_tensor_slices(X_subset.astype(np.float32))
-    dataset = dataset.shuffle(buffer_size=len(X_subset), seed=47).batch(128)
+    dataset = dataset.shuffle(buffer_size=len(X_subset), seed=47).batch(8)
 
     print(f"Training ClassicalVAE model {model_name} on {len(X_subset)} samples...")
     train_ClassicalVAE(vae_model, dataset, epochs=epochs, learning_rate=1e-4, model_name=model_name, save_dir=save_dir)
